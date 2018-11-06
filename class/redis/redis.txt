@@ -1,0 +1,24 @@
+ /**收集FORMID
+     * @param $userId
+     * @param $post
+     * @return mixed
+     */
+    public static function collectFormId($openId,$post){
+        $redis=RedisClient::getInstance();
+        $formIdKeyName='form_id_'.$openId;
+        $redis->lTrim($formIdKeyName,1,40);
+        foreach ($post['formId'] as $key=>$value){
+            if(is_numeric($value)) $re=$redis->lPush($formIdKeyName,$value);
+        }
+        return $re;
+    }
+    /**取出FORMID
+     * @param $userId
+     * @return mixed
+     */
+    public static function popFormId($openId){
+        $redis=RedisClient::getInstance();
+        $formIdKeyName='formId_'.$openId;
+        $formId=$redis->lPop($formIdKeyName);
+        return  $formId;
+    }
